@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-/// Slots used for the children of [PrototypeHeight] and [RenderDiagonal].
 enum PrototypeHeightSlot {
   prototypeItem,
   child,
 }
 
-/// A widget that demonstrates the usage of
-/// [SlottedMultiChildRenderObjectWidgetMixin] by providing slots for two
-/// children that will be arranged diagonally.
 class PrototypeHeight extends RenderObjectWidget
     with SlottedMultiChildRenderObjectWidgetMixin<PrototypeHeightSlot> {
   const PrototypeHeight({
@@ -36,18 +32,11 @@ class PrototypeHeight extends RenderObjectWidget
     }
   }
 
-  // The [createRenderObject] and [updateRenderObject] methods configure the
-  // [RenderObject] backing this widget with the configuration of the widget.
-  // They do not need to do anything with the children of the widget, though.
-  // The children of the widget are automatically configured on the
-  // [RenderObject] by [SlottedRenderObjectElement.mount] and
-  // [SlottedRenderObjectElement.update].
-
   @override
   SlottedContainerRenderObjectMixin<PrototypeHeightSlot> createRenderObject(
       BuildContext context,
       ) {
-    return RenderDiagonal(
+    return RenderPrototypeHeight(
       backgroundColor: backgroundColor,
     );
   }
@@ -57,23 +46,16 @@ class PrototypeHeight extends RenderObjectWidget
       BuildContext context,
       SlottedContainerRenderObjectMixin<PrototypeHeightSlot> renderObject,
       ) {
-    (renderObject as RenderDiagonal).backgroundColor = backgroundColor;
+    (renderObject as RenderPrototypeHeight).backgroundColor = backgroundColor;
   }
 }
 
-/// A render object that demonstrates the usage of
-/// [SlottedContainerRenderObjectMixin] by providing slots for two children that
-/// will be arranged diagonally.
-class RenderDiagonal extends RenderBox
+class RenderPrototypeHeight extends RenderBox
     with
         SlottedContainerRenderObjectMixin<PrototypeHeightSlot>,
         DebugOverflowIndicatorMixin {
-  RenderDiagonal({Color? backgroundColor}) : _backgroundColor = backgroundColor;
+  RenderPrototypeHeight({Color? backgroundColor}) : _backgroundColor = backgroundColor;
 
-  // Getters and setters to configure the [RenderObject] with the configuration
-  // of the [Widget]. These mostly contain boilerplate code, but depending on
-  // where the configuration value is used, the setter has to call
-  // [markNeedsLayout], [markNeedsPaint], or [markNeedsSemanticsUpdate].
   Color? get backgroundColor => _backgroundColor;
   Color? _backgroundColor;
   set backgroundColor(Color? value) {
@@ -100,7 +82,6 @@ class RenderDiagonal extends RenderBox
     // Children are allowed to be as big as they want (= unconstrained).
     const BoxConstraints childConstraints = BoxConstraints();
 
-    // Lay out the top left child and position it at offset zero.
     Size prototypeSize = Size.zero;
     final RenderBox? prototype = _prototype;
     if (prototype != null) {
@@ -109,10 +90,8 @@ class RenderDiagonal extends RenderBox
       prototypeSize = prototype.size;
     }
 
-    // Lay out the bottom right child and position it at the bottom right corner
-    // of the top left child.
-    Size childSize = Size.zero;
 
+    Size childSize = Size.zero;
     BoxConstraints siblingConstraints = BoxConstraints(
       maxHeight: prototypeSize.height,
       //maxWidth: prototypeSize.width,
@@ -122,9 +101,7 @@ class RenderDiagonal extends RenderBox
       child.layout(siblingConstraints, parentUsesSize: true);
       childSize = child.size;
     }
-
-    // Calculate the overall size and constrain it to the given constraints.
-    // Any overflow is marked (in debug mode) during paint.
+    
     _childrenSize = Size(
       childSize.width,
       prototypeSize.height,
