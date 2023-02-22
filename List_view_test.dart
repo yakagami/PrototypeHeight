@@ -119,7 +119,7 @@ class RenderDiagonal extends RenderBox
     );
     final RenderBox? child = _child;
     if (child != null) {
-      child.layout(siblingConstraints, parentUsesSize: false);
+      child.layout(siblingConstraints, parentUsesSize: true);
       childSize = child.size;
     }
 
@@ -153,9 +153,9 @@ class RenderDiagonal extends RenderBox
       context.paintChild(child, childParentData.offset + offset);
     }
 
-    final RenderBox? bottomRight = _child;
-    if (bottomRight != null) {
-      paintChild(bottomRight, context, offset);
+    final RenderBox? child = _child;
+    if (child != null) {
+      paintChild(child, context, offset);
     }
 
     // Paint an overflow indicator in debug mode if the children want to be
@@ -199,50 +199,50 @@ class RenderDiagonal extends RenderBox
 
   @override
   double computeMinIntrinsicWidth(double height) {
-    final double topLeftWidth =
+    final double prototypeWidth =
         _prototype?.getMinIntrinsicWidth(double.infinity) ?? 0;
-    final double bottomRightWith =
+    final double childWidth =
         _child?.getMinIntrinsicWidth(double.infinity) ?? 0;
-    return topLeftWidth + bottomRightWith;
+    return prototypeWidth + childWidth;
   }
 
   @override
   double computeMaxIntrinsicWidth(double height) {
-    final double topLeftWidth =
+    final double prototypeWidth =
         _prototype?.getMaxIntrinsicWidth(double.infinity) ?? 0;
-    final double bottomRightWith =
+    final double childWidth =
         _child?.getMaxIntrinsicWidth(double.infinity) ?? 0;
-    return topLeftWidth + bottomRightWith;
+    return prototypeWidth + childWidth;
   }
 
   @override
   double computeMinIntrinsicHeight(double width) {
-    final double topLeftHeight =
+    final double prototypeHeight =
         _prototype?.getMinIntrinsicHeight(double.infinity) ?? 0;
-    final double bottomRightHeight =
+    final double childHeight =
         _child?.getMinIntrinsicHeight(double.infinity) ?? 0;
-    return topLeftHeight + bottomRightHeight;
+    return prototypeHeight + childHeight;
   }
 
   @override
   double computeMaxIntrinsicHeight(double width) {
-    final double topLeftHeight =
+    final double prototypeHeight =
         _prototype?.getMaxIntrinsicHeight(double.infinity) ?? 0;
-    final double bottomRightHeight =
+    final double childHeight =
         _child?.getMaxIntrinsicHeight(double.infinity) ?? 0;
-    return topLeftHeight + bottomRightHeight;
+    return prototypeHeight + childHeight;
   }
 
   @override
   Size computeDryLayout(BoxConstraints constraints) {
     const BoxConstraints childConstraints = BoxConstraints();
-    final Size topLeftSize =
+    final Size prototypeSize =
         _prototype?.computeDryLayout(childConstraints) ?? Size.zero;
-    final Size bottomRightSize =
+    final Size childSize =
         _child?.computeDryLayout(childConstraints) ?? Size.zero;
     return constraints.constrain(Size(
-      topLeftSize.width + bottomRightSize.width,
-      topLeftSize.height + bottomRightSize.height,
+      prototypeSize.width + childSize.width,
+      prototypeSize.height + childSize.height,
     ));
   }
 }
@@ -262,15 +262,18 @@ class MyHomePage extends StatelessWidget {
               ],
             ),
             backgroundColor: Colors.white,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                 color: Colors.grey,
-                 child: TextButton(onPressed: (){print("clicked");}, child: const Text("Click!")),
-                );
-              }),
+            child: Container(
+              width: 100,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 5,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                   color: Colors.grey,
+                   child: TextButton(onPressed: (){print("clicked");}, child: const Text("Click!")),
+                  );
+                }),
+            ),
           ),
         ],
       ),
